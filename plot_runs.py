@@ -13,7 +13,7 @@ def calc_dsdz(salt,z):
     dz = z[:,-1]-z[:,0]
     return ds/dz
 
-outer = "/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/dsdx_tauy_vel/"
+outer = "/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/dsdx_tauy_pg/"
 os.chdir(outer)
 dirs=[os.listdir(outer)[i] for i in range(len(os.listdir(outer)))  if os.path.isdir(os.listdir(outer)[i])]
 N = len(dirs)

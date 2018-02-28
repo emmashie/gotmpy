@@ -9,7 +9,9 @@ import os
 
 %run /Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/plotting_cmdruns.py
 
-outer = "/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/h_mu_vel/"
+basepath="/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/"
+dir = "dsdx_tauy_pg"
+outer = "%s%s/"%(basepath,dir)
 os.chdir(outer)
 dirs=[os.listdir(outer)[i] for i in range(len(os.listdir(outer)))  if os.path.isdir(os.listdir(outer)[i])]
 N = len(dirs)
@@ -18,8 +20,8 @@ os.chdir(inner)
 M = len([os.listdir(inner)[i] for i in range(len(os.listdir(inner))) if os.path.isdir(os.listdir(inner)[i])])
 
 mld_dur = np.zeros((N,M))
-dsdx = np.zeros((N,M))
-tauy = np.zeros((N,M))
+outr = np.zeros((N,M))
+inr = np.zeros((N,M))
 os.chdir(outer)
 for i in range(N):
     path = outer + dirs[i]
@@ -35,19 +37,19 @@ for i in range(N):
         time = np.squeeze(dat["time"])
         mld = calc_mld(salt,z)
         mld_dur[i,j] = calc_dur(mld,2)
-        dsdx[i,j] = float(re.findall(r'-?\ *[0-9]+\.?[0-9]*(?:[Ee]\ *-?\ *[0-9]+)?',dirs[i])[0])
-        tauy[i,j] = float(re.findall(r'-?\ *[0-9]+\.?[0-9]*(?:[Ee]\ *-?\ *[0-9]+)?',sdirs[i])[0])
+        outr[i,j] = float(re.findall(r'-?\ *[0-9]+\.?[0-9]*(?:[Ee]\ *-?\ *[0-9]+)?',dirs[i])[0])
+        inr[i,j] = float(re.findall(r'-?\ *[0-9]+\.?[0-9]*(?:[Ee]\ *-?\ *[0-9]+)?',sdirs[i])[0])
 
 f = open(outer+"h_mu_vel.csv","w")
 # write first row
 f.write("0.00000,")
-for i in range(len(tauy[:,0])-1):
-    f.write("%f," % (tauy[i,0]))
-f.write("%f" % (tauy[-1,0]))
+for i in range(len(inr[:,0])-1):
+    f.write("%f," % (inr[i,0]))
+f.write("%f" % (inr[-1,0]))
 f.write("\n")
 # loop through dsdx and mld 
 for i in range(len(mld_dur[0,:])):
-    f.write("%f," % (dsdx[i,0]))
+    f.write("%f," % (outr[i,0]))
     for j in range(len(mld_dur[:,0])-1):
         f.write("%f," % (mld_dur[i,j]))
     f.write("%f" % (mld_dur[i,-1]))
