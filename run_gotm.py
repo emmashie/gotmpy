@@ -27,8 +27,44 @@ def set_h(file_name="gotmrun.nml", ln=48, value=15):
     htext = "   depth = %f,\n" % (value)
     replace_line(file_name, ln, htext)
     
-temp_dir = "/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/template_vel/"
+def bot_rough(file_name="gotmmean.nml", ln=76, value=0.05):
+    h0btext = "   h0b = %f,\n" % (value)
+    replace_line(file_name, ln, h0btext)
+    
+temp_dir = "/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/template_pg/"
 results_base_dir = "/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/"
+
+if 0: 
+    bot_dir = results_base_dir + "bot_stress/"
+    if not os.path.exists(bot_dir):
+        os.makedirs(bot_dir)
+    # set up u range
+    u_min = 0 # psu/m
+    u_max = 0.00001 # psu/m
+    n = 5
+    ur = np.linspace(u_min, u_max, n)
+    # set up bottom roughness range
+    b_min = 5 # N/m^2
+    b_max = 10 # N/m^2
+    n = 5
+    br = np.linspace(b_min, b_max, n)
+    # loop over u
+    for i in range(len(ur)):
+        u_name = "mu_%f" % (ur[i])
+        u_dir = bot_dir + u_name 
+        if not os.path.exists(u_dir):
+            os.makedirs(u_dir)
+        for j in range(len(br)):
+            b_name = "bot_%f" % (br[j])
+            b_dir = u_dir + "/" + b_name
+            cmd = "cp -r %s %s" % (temp_dir, b_dir)
+            subprocess.call(cmd,shell=True)
+            obsfile = b_dir + "/obs.nml"
+            set_mu(file_name=obsfile, value=ur[i])
+            mnfile = b_dir + "/gotmmean.nml"
+            bot_rough(file_name=mnfile, value=br[j])
+            os.chdir(b_dir)
+            subprocess.call("gotm",shell=True)
 
 ### ds/dx only 
 if 0: 
@@ -48,6 +84,28 @@ if 0:
         ln = 269
         dsdxtext = "   const_dsdx = %f,\n" % (dsdxr[i])
         replace_line(obsfile, ln, dsdxtext)
+        os.chdir(run_dir)
+        subprocess.call("gotm",shell=True)
+
+### u only 
+if 1: 
+    mu_dir = results_base_dir + "mu_runs_bs/"
+    if not os.path.exists(mu_dir):
+        os.makedirs(mu_dir)
+    dsdx = -0.0001 # psu/m
+    mu_min = 0
+    mu_max = 0.00002
+    n = 25
+    mur = np.linspace(mu_min, mu_max, n)
+    for i in range(len(mur)):
+        run_name = "mu_%.7f" % (mur[i])
+        run_dir = mu_dir + run_name
+        cmd = "cp -r %s %s" % (temp_dir, run_dir)
+        subprocess.call(cmd,shell=True)
+        obsfile = run_dir+"/obs.nml"
+        set_mu(file_name=obsfile, value=mur[i])
+        mnfile = run_dir + "/gotmmean.nml"
+        bot_rough(file_name=mnfile, value=5)
         os.chdir(run_dir)
         subprocess.call("gotm",shell=True)
     
@@ -89,7 +147,7 @@ if 0:
 ##### dsdx and tidal strength (mu)
 if 0:
     # set up dsdx and tidal strength directories
-    dsdxu_dir = results_base_dir + "dsdx_u_vel/"
+    dsdxu_dir = results_base_dir + "dsdx_u_pg_zeta/"
     if not os.path.exists(dsdxu_dir):
         os.makedirs(dsdxu_dir)
     # set up dsdx range
@@ -99,7 +157,8 @@ if 0:
     dsdxr = np.linspace(dsdx_min, dsdx_max, n)
     # set up tidal range
     mu_min = 0
-    mu_max = 1.0
+    #mu_max = 1.0
+    mu_max = -0.00002
     n = 10
     mur = np.linspace(mu_min, mu_max, n)
     # loop over dsdx
@@ -123,7 +182,7 @@ if 0:
 ##### dsdx and water depth 
 if 0:
     # set up dsdx and water depth directories
-    dsdxh_dir = results_base_dir + "dsdx_h_vel/"
+    dsdxh_dir = results_base_dir + "dsdx_h_pg/"
     if not os.path.exists(dsdxh_dir):
         os.makedirs(dsdxh_dir)
     # set up dsdx range   
@@ -156,9 +215,9 @@ if 0:
 
 
 ##### water depth and tidal strength 
-if 1:
+if 0:
     # set up water depth and tidal strength
-    hmu_dir = results_base_dir + "h_mu_vel/"
+    hmu_dir = results_base_dir + "h_mu_pg/"
     if not os.path.exists(hmu_dir):
         os.makedirs(hmu_dir)
     # set up water depth range
@@ -168,7 +227,8 @@ if 1:
     hr = np.linspace(h_min, h_max, n)
     # set up tidal range
     mu_min = 0
-    mu_max = 1.0
+    #mu_max = 1.0
+    mu_max = -0.00001
     n = 10
     mur = np.linspace(mu_min, mu_max, n)
     # loop over h 
