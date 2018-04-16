@@ -10,7 +10,7 @@ import gotmpy.plotting_cmdruns as cmd
 plt.ioff()
 
 basepath="/Users/emmashienuss/Google_Drive/1_Nutrient_Share/1_Projects_NUTRIENTS/Modeling/Scenario_Risk_Modeling/1D_Model_Tests/stratification_tests/1D_tests/"
-dir = "mu_runs_pos"
+dir = "dsdx_pgset"
 outer = "%s%s/"%(basepath,dir)
 os.chdir(outer)
 dirs=[os.listdir(outer)[i] for i in range(len(os.listdir(outer)))  if os.path.isdir(os.listdir(outer)[i])]
@@ -56,7 +56,7 @@ for i in range(N):
         ax[0].set_xlim((0,60))
         fig.savefig("%s/vars_timeseries_zoom.png"%(path))
         plt.close("all")
-    if 1:
+    if 0:
         n = 24
         cmd.plot_profiles(salt[n:,:],z[n:,:])
         plt.title("salt profile hour:%s"%(str(n)))
@@ -70,7 +70,7 @@ for i in range(N):
         plt.title("salt profile hour:%s"%(str(n)))
         plt.savefig("%s/vars_prof204.png"%(path))
         plt.close("all")
-    if 1:
+    if 0:
         plt.figure()
         plt.plot(dsdz, zeta)
         plt.xlabel("ds/dz")
@@ -89,21 +89,21 @@ for i in range(N):
         plt.ylabel("water depth")
         plt.savefig("%s/dsdz_zeta_ss108.png"%(path))
         plt.close("all")
-    if 1:
+    if 0:
         plt.figure(figsize=(9,5))
         plt.plot(dsdz)
         plt.ylabel("ds/dz")
         plt.xlabel("hours")
         plt.savefig("%s/dsdz.png"%(path))
         plt.close("all")
-if 1: 
+if 0: 
     plt.figure(figsize=(11,5))
     plt.plot(x,y, 'o-')
     plt.xlabel("tidal amp pg")
     plt.ylabel("duration of mixed layer less than 2 m [hours]")
     plt.savefig("%s/u_mld.png"%(outer))
     plt.close("all")    
-if 1:
+if 0:
     xy0 = zip(outr.tolist(), umi.tolist())
     xys0 = sorted(xy0)
     x0 = np.asarray([xys0[i][0] for i in range(len(xys0))])
@@ -113,8 +113,8 @@ if 1:
     x1 = np.asarray([xys1[i][0] for i in range(len(xys1))])
     y1 = np.asarray([xys1[i][1] for i in range(len(xys1))])
     plt.figure(figsize=(9,5))
-    plt.plot(x,y0)
-    plt.plot(x,y1)
+    plt.plot(x,y0, 'o-')
+    plt.plot(x,y1, 'o-')
     plt.ylabel("tidal velocity [m/s]")
     plt.xlabel("pressure gradient")
     plt.plot(outr, np.ones(len(outr))*0.4, 'k--', alpha=0.6)
